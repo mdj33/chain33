@@ -116,6 +116,7 @@ func TestBlockChain(t *testing.T) {
 	testProcDelParaChainBlockMsg(t, mock33, blockchain)
 
 	testProcAddParaChainBlockMsg(t, mock33, blockchain)
+	testGetSeqByHashMsg(t, mock33, blockchain)
 	testProcBlockChainFork(t, blockchain)
 	testDelBlock(t, blockchain, curBlock)
 
@@ -931,4 +932,25 @@ func testAddBlockSeqCB(t *testing.T, blockchain *blockchain.BlockChain) {
 		t.Error("testAddBlockSeqCB  getSeqCBLastNum", "num", num, "name", cb.Name)
 	}
 	chainlog.Info("testAddBlockSeqCB end -------------------------")
+}
+
+func testGetSeqByHashMsg(t *testing.T, mock33 *testnode.Chain33Mock, blockchain *blockchain.BlockChain) {
+	chainlog.Info("testProcAddParaChainBlockMsg begin --------------------")
+
+	curheight := blockchain.GetBlockHeight()
+	block, err := blockchain.GetBlock(curheight)
+	require.NoError(t, err)
+
+	var req types.ReqHash
+	req.Hash = block.Block.ParentHash
+
+	msgGen := mock33.GetClient().NewMessage("blockchain", types.EventGetSeqByHash, &req)
+
+	mock33.GetClient().Send(msgGen, true)
+	_, err = mock33.GetClient().Wait(msgGen)
+	if err != nil {
+		t.Log(err)
+		//t.Error("testProcAddParaChainBlockMsg  only in parachain ")
+	}
+	chainlog.Info("testProcAddParaChainBlockMsg end --------------------")
 }

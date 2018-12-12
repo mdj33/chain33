@@ -779,6 +779,15 @@ func testGetTransactionByHashesOK(t *testing.T) {
 
 }
 
+func TestGetSequenceByHash(t *testing.T) {
+	var in *pb.ReqHash
+	qapi.On("GetSequenceByHash", in).Return(nil, nil)
+	data, err := g.GetSequenceByHash(getOkCtx(), in)
+	assert.Nil(t, err, "the error should be nil")
+	assert.Nil(t, data)
+
+}
+
 func TestGetTransactionByHashes(t *testing.T) {
 	//testGetTransactionByHashesReject(t)
 	testGetTransactionByHashesOK(t)
