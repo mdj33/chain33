@@ -96,6 +96,7 @@ func TestQueueProtocol(t *testing.T) {
 	testStoreGetTotalCoins(t, api)
 	testStoreList(t, api)
 	testBlockChainQuery(t, api)
+	testGetBlockSequences(t, api)
 }
 
 func testBlockChainQuery(t *testing.T, api client.QueueProtocolAPI) {
@@ -564,6 +565,21 @@ func testGetBlocks(t *testing.T, api client.QueueProtocolAPI) {
 	_, err = api.GetBlocks(&types.ReqBlocks{Start: 1})
 	if err == nil {
 		t.Error("GetBlocks(&types.ReqBlocks{Start:1}) need return error.")
+	}
+}
+
+func testGetBlockSequences(t *testing.T, api client.QueueProtocolAPI) {
+	_, err := api.GetBlockSequences(&types.ReqBlocks{})
+	if err != nil {
+		t.Error("Call GetBlockSequences Failed.", err)
+	}
+	_, err = api.GetBlockSequences(nil)
+	if err == nil {
+		t.Error("GetBlockSequences(nil) need return error.")
+	}
+	_, err = api.GetBlockSequences(&types.ReqBlocks{Start: 1, End: 2})
+	if err == nil {
+		t.Error("GetBlockSequences(&types.ReqBlocks{Start:1}) need return error.")
 	}
 }
 

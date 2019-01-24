@@ -91,6 +91,16 @@ func (m *mockBlockChain) SetQueueClient(q queue.Queue) {
 				} else {
 					msg.ReplyErr("Do not support", types.ErrInvalidParam)
 				}
+			case types.EventGetBlockSequences:
+				if req, ok := msg.GetData().(*types.ReqBlocks); ok {
+					if req.Start == 1 {
+						msg.Reply(client.NewMessage(blockchainKey, types.EventReplyBlockSequences, &types.Transaction{}))
+					} else {
+						msg.Reply(client.NewMessage(blockchainKey, types.EventReplyBlockSequences, &types.BlockSequences{}))
+					}
+				} else {
+					msg.ReplyErr("Do not support", types.ErrInvalidParam)
+				}
 			case types.EventGetBlockHash:
 				if req, ok := msg.GetData().(*types.ReqInt); ok {
 					if req.Height == 10 {
