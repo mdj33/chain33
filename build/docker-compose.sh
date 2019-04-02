@@ -320,7 +320,8 @@ function transfer() {
                     ${CLI} tx query_hash -s "${hashes[$i]}"
                 done
                 echo "----------block info------------------"
-                ${CLI} block get -s 0 -e 20 -d 1
+                lastheight=$(${CLI} block last_header | jq -r ".height")
+                ${CLI} block get -s 1 -e "${lastheight}" -d 1
 
                 exit 1
             fi
