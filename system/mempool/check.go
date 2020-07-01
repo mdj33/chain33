@@ -96,12 +96,14 @@ func (mem *Mempool) checkTxs(msg *queue.Message) *queue.Message {
 	types.AssertConfig(mem.client)
 	err := tx.Check(mem.client.GetConfig(), header.GetHeight(), mem.cfg.MinTxFeeRate, mem.cfg.MaxTxFee)
 	if err != nil {
+		mlog.Error("checkTxs", "txHash", common.ToHex(tx.Tx().Hash()), "err", err)
 		msg.Data = err
 		return msg
 	}
 	if mem.cfg.IsLevelFee {
 		err = mem.checkLevelFee(tx)
 		if err != nil {
+			mlog.Error("checkTxs level fee", "txHash", common.ToHex(tx.Tx().Hash()), "err", err)
 			msg.Data = err
 			return msg
 		}
