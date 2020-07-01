@@ -524,6 +524,8 @@ func (tx *Transaction) check(cfg *Chain33Config, height, minfee, maxFee int64) e
 	if tx.Fee > maxFee && maxFee > 0 && cfg.IsFork(height, "ForkBlockCheck") {
 		return ErrTxFeeTooHigh
 	}
+	tlog.Info("Transaction fee check ErrTxFeeTooLow", "fee", tx.Fee, "realFee", realFee, "size", txSize,
+		"sig", Size(tx.Signature), "pay", len(tx.Payload), "hash", len(tx.HashCache), "ful", len(tx.FullHashCache), "hash", common.ToHex(tx.Hash()))
 	return nil
 }
 
