@@ -1,7 +1,6 @@
 package mempool
 
 import (
-	"errors"
 	"time"
 
 	"github.com/33cn/chain33/common"
@@ -11,6 +10,7 @@ import (
 	"github.com/33cn/chain33/common/address"
 	"github.com/33cn/chain33/queue"
 	"github.com/33cn/chain33/types"
+	"github.com/pkg/errors"
 )
 
 // CheckExpireValid 检查交易过期有效性，过期返回false，未过期返回true
@@ -97,14 +97,15 @@ func (mem *Mempool) checkTxs(msg *queue.Message) *queue.Message {
 	err := tx.Check(mem.client.GetConfig(), header.GetHeight(), mem.cfg.MinTxFeeRate, mem.cfg.MaxTxFee)
 	if err != nil {
 		mlog.Error("checkTxs", "txHash", common.ToHex(tx.Tx().Hash()), "err", err)
-		msg.Data = err
+
+		msg.Data = errors.Wrap(err, "checkTxs")
 		return msg
 	}
 	if mem.cfg.IsLevelFee {
 		err = mem.checkLevelFee(tx)
 		if err != nil {
 			mlog.Error("checkTxs level fee", "txHash", common.ToHex(tx.Tx().Hash()), "err", err)
-			msg.Data = err
+			msg.Data = errors.Wrap(err, "checkTxs level fee")
 			return msg
 		}
 	}

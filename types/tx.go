@@ -510,14 +510,17 @@ func (tx *Transaction) check(cfg *Chain33Config, height, minfee, maxFee int64) e
 	if txSize > int(MaxTxSize) {
 		return ErrTxMsgSizeTooBig
 	}
+
 	if minfee == 0 {
 		return nil
 	}
 	// 检查交易费是否小于最低值
 	realFee := int64(txSize/1000+1) * minfee
 	if tx.Fee < realFee {
+		sizeSig := Size(tx.Signature)
 		tlog.Error("Transaction fee check ErrTxFeeTooLow", "fee", tx.Fee, "realFee", realFee, "size", txSize)
-		return errors.Wrapf(ErrTxFeeTooLow, "fee=%d,realfee=%d,size=%d", tx.Fee, realFee, txSize)
+		return errors.Wrapf(ErrTxFeeTooLow, "fee=%d,realfee=%d,size=%d,sig=%d,exe=%d,pay=%d,hash=%d,ful=%d,xxx=%d",
+			tx.Fee, realFee, txSize, sizeSig, len(tx.Execer), len(tx.Payload), len(tx.HashCache), len(tx.FullHashCache), tx.XXX_Size())
 	}
 	if tx.Fee > maxFee && maxFee > 0 && cfg.IsFork(height, "ForkBlockCheck") {
 		return ErrTxFeeTooHigh
