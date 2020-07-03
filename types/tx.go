@@ -526,10 +526,10 @@ func (tx *Transaction) check(cfg *Chain33Config, height, minfee, maxFee int64) e
 	}
 	tlog.Info("Transaction fee check ErrTxFeeTooLow", "fee", tx.Fee, "realFee", realFee, "size", Size(tx),
 		"sig", Size(tx.Signature), "hash", len(tx.HashCache), "ful", len(tx.FullHashCache), "hash", common.ToHex(tx.Hash()))
-	sizeSig := Size(tx.Signature)
-	if sizeSig > 300 {
-		panic("more300")
-	}
+	//sizeSig := Size(tx.Signature)
+	//if sizeSig > 300 {
+	//	panic("more300")
+	//}
 	return nil
 }
 
