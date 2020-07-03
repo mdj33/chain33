@@ -94,7 +94,7 @@ func (mem *Mempool) checkTxs(msg *queue.Message) *queue.Message {
 	//普通的交易
 	tx := types.NewTransactionCache(txmsg)
 	types.AssertConfig(mem.client)
-	mlog.Info("checkTxs", "txHash", common.ToHex(tx.Tx().Hash()), "hash", len(tx.FullHash()), "full", len(tx.HashCache), "cac", common.ToHex(tx.HashCache))
+	mlog.Info("checkTxs", "txHash", common.ToHex(tx.Tx().Hash()), "hash", len(tx.HashCache), "full", len(tx.FullHashCache))
 	err := tx.Check(mem.client.GetConfig(), header.GetHeight(), mem.cfg.MinTxFeeRate, mem.cfg.MaxTxFee)
 	if err != nil {
 		mlog.Error("checkTxs", "txHash", common.ToHex(tx.Tx().Hash()), "err", err)
