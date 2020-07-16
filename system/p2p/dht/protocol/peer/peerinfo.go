@@ -71,23 +71,23 @@ func (p *peerInfoProtol) fetchPeersInfo() {
 func (p *peerInfoProtol) getLoacalPeerInfo() *types.P2PPeerInfo {
 	var peerinfo types.P2PPeerInfo
 
-	resp, err := p.QueryMempool(types.EventGetMempoolSize, nil)
-	if err != nil {
-		log.Error("getlocalPeerInfo", "sendToMempool", err)
-		return nil
-	}
+	//resp, err := p.QueryMempool(types.EventGetMempoolSize, nil)
+	//if err != nil {
+	//	log.Error("getlocalPeerInfo", "sendToMempool", err)
+	//	return nil
+	//}
+	//
+	//meminfo := resp.(*types.MempoolSize)
+	//peerinfo.MempoolSize = int32(meminfo.GetSize())
 
-	meminfo := resp.(*types.MempoolSize)
-	peerinfo.MempoolSize = int32(meminfo.GetSize())
-
-	resp, err = p.QueryBlockChain(types.EventGetLastHeader, nil)
-	if err != nil {
-		log.Error("getlocalPeerInfo", "sendToBlockChain", err)
-		return nil
-	}
-
-	header := resp.(*types.Header)
-	peerinfo.Header = header
+	//resp, err = p.QueryBlockChain(types.EventGetLastHeader, nil)
+	//if err != nil {
+	//	log.Error("getlocalPeerInfo", "sendToBlockChain", err)
+	//	return nil
+	//}
+	//
+	//header := resp.(*types.Header)
+	//peerinfo.Header = header
 	peerinfo.Name = p.Host.ID().Pretty()
 	splites := strings.Split(p.Host.Addrs()[0].String(), "/")
 	port, _ := strconv.Atoi(splites[len(splites)-1])
