@@ -41,13 +41,13 @@ type SubMsg struct {
 type subCallBack func(msg *SubMsg)
 
 // NewPubSub new pub sub
-func NewPubSub(ctx context.Context, host host.Host) (*PubSub, error) {
+func NewPubSub(ctx context.Context, host host.Host, disc *Discovery) (*PubSub, error) {
 	p := &PubSub{
 		ps:     nil,
 		topics: make(TopicMap),
 	}
 	//选择使用GossipSub
-	ps, err := pubsub.NewGossipSub(ctx, host)
+	ps, err := pubsub.NewGossipSub(ctx, host, pubsub.WithDiscovery(disc.routingDiscovery))
 	if err != nil {
 		return nil, err
 	}

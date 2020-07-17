@@ -93,6 +93,9 @@ func (p *peerPubSub) subCallBack(msg *net.SubMsg) {
 
 //获取所有已经订阅的topic
 func (p *peerPubSub) handleGetTopics(msg *queue.Message) {
+	ids := p.pubsubOp.FetchTopicPeers("PARA-BLS-SIGN-TOPIC")
+	log.Info("handleGetTopics", "ids", fmt.Sprint(ids))
+
 	_, ok := msg.GetData().(*types.FetchTopicList)
 	if !ok {
 		msg.Reply(p.GetQueueClient().NewMessage("", types.EventFetchTopics, &types.Reply{IsOk: false, Msg: []byte("need *types.FetchTopicList")}))
@@ -100,6 +103,10 @@ func (p *peerPubSub) handleGetTopics(msg *queue.Message) {
 	}
 	//获取topic列表
 	topics := p.pubsubOp.GetTopics()
+	for _, id := range ids {
+		topics = append(topics, string(id))
+	}
+
 	var reply types.TopicList
 	reply.Topics = topics
 	msg.Reply(p.GetQueueClient().NewMessage("", types.EventFetchTopics, &types.Reply{IsOk: true, Msg: types.Encode(&reply)}))
