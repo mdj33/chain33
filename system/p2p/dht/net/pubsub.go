@@ -120,7 +120,7 @@ func (p *PubSub) Publish(topic string, msg []byte) error {
 func (p *PubSub) subTopic(ctx context.Context, sub *pubsub.Subscription, callback subCallBack) {
 	topic := sub.Topic()
 	go func() {
-
+		var count int
 		for {
 			got, err := sub.Next(ctx)
 			if err != nil {
@@ -129,6 +129,32 @@ func (p *PubSub) subTopic(ctx context.Context, sub *pubsub.Subscription, callbac
 				return
 			}
 			log.Debug("SubMsg", "readData size", len(got.GetData()), "from", got.GetFrom().String(), "recieveFrom", got.ReceivedFrom.Pretty(), "topic", topic, "peerlist", p.FetchTopicPeers(topic))
+			if len(p.FetchTopicPeers(topic)) == 0 {
+				count++
+				if count < 15 {
+					continue
+				}
+				count = 0
+				sub.Cancel()
+				topicinfo, ok := p.topics[topic]
+				if !ok {
+					p.RemoveTopic(topic)
+					log.Error("subtopic remove")
+					return
+				}
+				topicinfo.pubtopic.Close()
+				topicinfo.pubtopic, err = p.ps.Join(topic)
+				if err != nil {
+					log.Error("subtopic join", "err", err)
+					return
+				}
+				sub, err = topicinfo.pubtopic.Subscribe()
+				if err != nil {
+					log.Error("subtopic subscribe", "err", err)
+					return
+				}
+			}
+
 			var data SubMsg
 			data.Data = got.GetData()
 			data.Topic = topic
