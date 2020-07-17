@@ -128,7 +128,7 @@ func (p *PubSub) subTopic(ctx context.Context, sub *pubsub.Subscription, callbac
 				p.RemoveTopic(topic)
 				return
 			}
-			log.Debug("SubMsg", "readData size", len(got.GetData()), "from", got.GetFrom().String(), "recieveFrom", got.ReceivedFrom.Pretty(), "topic", topic)
+			log.Debug("SubMsg", "readData size", len(got.GetData()), "from", got.GetFrom().String(), "recieveFrom", got.ReceivedFrom.Pretty(), "topic", topic, "peerlist", p.FetchTopicPeers(topic))
 			var data SubMsg
 			data.Data = got.GetData()
 			data.Topic = topic
