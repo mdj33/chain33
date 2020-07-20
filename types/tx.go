@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"encoding/hex"
 	"encoding/json"
+	"github.com/pkg/errors"
 	"reflect"
 	"sort"
 	"time"
@@ -514,7 +515,8 @@ func (tx *Transaction) check(cfg *Chain33Config, height, minfee, maxFee int64) e
 	}
 	// 检查交易费是否小于最低值
 	if tx.Fee < realFee {
-		return ErrTxFeeTooLow
+		return errors.Wrapf(ErrTxFeeTooLow, "fee=%d,realfee=%d,size=%d,sig=%d,hash=%d,ful=%d,tx=%s",
+			tx.Fee, realFee, Size(tx), Size(tx.Signature), len(tx.HashCache), len(tx.FullHashCache), common.ToHex(tx.Hash()))
 	}
 	if tx.Fee > maxFee && maxFee > 0 && cfg.IsFork(height, "ForkBlockCheck") {
 		return ErrTxFeeTooHigh
